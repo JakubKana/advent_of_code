@@ -1,5 +1,6 @@
 import fs from "node:fs";
 export default class InputLoader {
+    _path;
     constructor(path) {
         this._path = path;
     }
