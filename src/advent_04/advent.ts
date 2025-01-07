@@ -199,4 +199,44 @@ function runPart1() {
 
 }
 
+function countXmasOccurences(rowsArray: string[]) {
+    let X_MAS_count = 0;
+    //iterate over rows
+    for (let rowI = 1; rowI < rowsArray.length - 1; rowI++) {
+        // iterate over columns
+        for (let columnI = 1; columnI < rowsArray[rowI].length - 1; columnI++) {
+            const middle = rowsArray[rowI][columnI];
+            if (middle === "A") {
+
+                const TOP_LEFT = rowsArray[rowI - 1][columnI - 1];
+                const TOP_RIGHT = rowsArray[rowI - 1][columnI + 1];
+                const BOTTOM_LEFT = rowsArray[rowI + 1][columnI - 1];
+                const BOTTOM_RIGHT = rowsArray[rowI + 1][columnI + 1];
+
+                const array = [TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT];
+
+                const mCount = array.filter((letter) => letter.includes("M")).length;
+                const sCount = array.filter((letter) => letter.includes("S")).length;
+
+                if (mCount === 2 && sCount === 2 && TOP_LEFT !== BOTTOM_RIGHT && TOP_RIGHT !== BOTTOM_LEFT) {
+                    X_MAS_count++;
+                }
+            }
+        }
+    }
+    return X_MAS_count;
+}
+
+function runPart2() {
+    const input = inputLoader.loadInput();
+    const rowsArray = getRowsArray(input);
+    const xmasCount = countXmasOccurences(rowsArray);
+    console.log({xmasCount});
+}
+
+const measure = performance.now();
 runPart1();
+const measure2 = performance.now() - measure;
+console.log({measure2: `${measure2}ms`});
+
+runPart2();
