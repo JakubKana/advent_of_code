@@ -1,8 +1,8 @@
-import InputLoader from "../utils/Input.js";
+import InputLoader from "../utils/InputLoader.js";
 import path from "node:path";
-import {dirname} from "../helpers.js";
+import {getDirname} from "../utils/helpers.js";
 
-const inputLoader = new InputLoader(path.join(dirname, "advent_04", "input.txt"));
+const inputLoader = new InputLoader().setPath(path.join(getDirname(), "input_01.txt"));
 
 enum Direction {
     TOP_LEFT_BOTTOM_RIGHT = 1,
@@ -25,7 +25,7 @@ function getColumnsArray(rowsArray: string[], reversed: boolean = false) {
     let columnsArray: string[] = [];
     for (let i = 0; i < rowsArray.length; i++) {
         const row = rowsArray[i];
-        let columnRow: string = "";
+        const columnRow: string = "";
         for (let j = 0; j < row.length; j++) {
             const columnLetter = row[j];
             if (columnsArray[j] === undefined) {
@@ -53,7 +53,7 @@ function getDiagonalsArray(rowsArray: string[], direction: Direction) {
         const endPosition = {columnI: 0, rowI: 0};
         let goOn = true;
         while (goOn) {
-            let currentPosition = {...startPosition};
+            const currentPosition = {...startPosition};
 
             let diagonalString = "";
 
@@ -98,7 +98,7 @@ function getDiagonalsArray(rowsArray: string[], direction: Direction) {
 
         let goOn = true;
         while (goOn) {
-            let currentPosition = {...startPosition};
+            const currentPosition = {...startPosition};
 
             let diagonalString = "";
 
@@ -176,16 +176,16 @@ function runPart1() {
     });
 
     // COUNTING OF XMAS OCCURENCES
-    let xmasCountRowsArray = getXmasCount(rowsArray);
-    let xmasCountColumnsArray = getXmasCount(columnsArray);
+    const xmasCountRowsArray = getXmasCount(rowsArray);
+    const xmasCountColumnsArray = getXmasCount(columnsArray);
 
-    let xmasCountDiagonalArrayTopLeft = getXmasCount(diagonalArrayTopLeft);
-    let xmasCountDiagonalArrayBottomLeft = getXmasCount(diagonalArrayBottomLeft);
+    const xmasCountDiagonalArrayTopLeft = getXmasCount(diagonalArrayTopLeft);
+    const xmasCountDiagonalArrayBottomLeft = getXmasCount(diagonalArrayBottomLeft);
 
-    let xmasCountDiagonalArrayTopLeftReversed = getXmasCount(diagonalArrayTopLeftReversed);
-    let xmasCountDiagonalArrayBottomLeftReversed = getXmasCount(diagonalArrayBottomLeftReversed);
+    const xmasCountDiagonalArrayTopLeftReversed = getXmasCount(diagonalArrayTopLeftReversed);
+    const xmasCountDiagonalArrayBottomLeftReversed = getXmasCount(diagonalArrayBottomLeftReversed);
 
-    let total = xmasCountRowsArray + xmasCountColumnsArray + xmasCountDiagonalArrayTopLeft + xmasCountDiagonalArrayBottomLeft;
+    const total = xmasCountRowsArray + xmasCountColumnsArray + xmasCountDiagonalArrayTopLeft + xmasCountDiagonalArrayBottomLeft;
 
     console.log({
         xmasCountRowsArray,

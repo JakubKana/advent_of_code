@@ -1,8 +1,8 @@
-import InputLoader from "../utils/Input.js";
+import InputLoader from "../utils/InputLoader.js";
 import path from "node:path";
-import {dirname} from "../helpers.js";
+import {getDirname} from "../utils/helpers.js";
 
-const inputLoader = new InputLoader(path.join(dirname, "advent_03", "input.txt"));
+const inputLoader = new InputLoader().setPath(path.join(getDirname(), "input_01.txt"));
 
 
 function runPart1(inputString?: string) {

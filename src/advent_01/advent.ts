@@ -1,9 +1,9 @@
 import path from 'node:path';
-import {dirname} from "../helpers.js";
-import InputLoader from "../utils/Input.js";
+import {getDirname} from "../utils/helpers.js";
+import InputLoader from "../utils/InputLoader.js";
 
 
-const inputLoader = new InputLoader(path.join(dirname, "advent_01", "input.txt"));
+const inputLoader = new InputLoader().setPath(path.join(getDirname(), "input_01.txt"));
 
 
 function calculateDifferences(leftArray: number[], rightArray: number[]) {

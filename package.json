@@ -5,9 +5,12 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "build:watch": "tsc --watch",
-    "copyAssets": "node copyAssets.js"
+    "ts:build": "tsc",
+    "ts:build:watch": "tsc --watch",
+    "build": "npm run ts:build && npm run copyAssets",
+    "copyAssets": "node copyAssets.js",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix"
   },
   "keywords": [
     "advent",
@@ -18,9 +21,15 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "typescript": "^5.7.2"
+    "@types/callsite": "^1.0.34",
+    "eslint": "^9.20.1",
+    "globals": "^15.15.0",
+    "plop": "^4.0.1",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.24.0"
   },
   "dependencies": {
-    "@types/node": "^22.10.2"
+    "@types/node": "^22.10.2",
+    "callsite": "^1.0.0"
   }
 }

@@ -1,14 +1,13 @@
-import InputLoader from "../utils/Input.js";
+import InputLoader from "../utils/InputLoader.js";
 import path from "node:path";
-import {dirname} from "../helpers.js";
+import {getDirname} from "../utils/helpers.js";
 
-const inputLoader = new InputLoader(path.join(dirname, "advent_02", "input.txt"));
+const inputLoader = new InputLoader().setPath(path.join(getDirname(), "input_01.txt"));
 
 enum Order {
     NONE,
     ASCENDING,
     DESCENDING,
-
 }
 
 function loadNumbersArray() {
@@ -94,7 +93,7 @@ function runPart2() {
     const safeArrays = result.filter((res) => res.safe).map((res) => res.array);
     const unsafeArrays = result.filter((res) => !res.safe).map((res) => res.array);
     const newSafeArrays: number[][] = []
-    for (let array of unsafeArrays) {
+    for (const array of unsafeArrays) {
         for (let i = 0; i < array.length; i++) {
 
             const newArray = removeElementFromArray(array, i);

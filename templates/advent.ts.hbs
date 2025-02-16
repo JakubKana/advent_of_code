@@ -1,0 +1,17 @@
+import InputLoader from "../utils/InputLoader.js";
+import path from "node:path";
+import {dirname} from "../helpers.js";
+
+const inputLoader = new InputLoader(path.join(dirname, "{{path}}", "input_01.txt"));
+
+function runPart1() {
+    const input = inputLoader.loadInput();
+
+    console.log(input);
+}
+
+function runPart2() {
+    const input = inputLoader.loadInput();
+
+    console.log(input);
+}
