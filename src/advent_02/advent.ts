@@ -1,6 +1,7 @@
 import InputLoader from "../utils/InputLoader.js";
 import path from "node:path";
 import {getDirname} from "../utils/helpers.js";
+import {measureInMs} from "../utils/measure.js";
 
 const inputLoader = new InputLoader().setPath(path.join(getDirname(), "input_01.txt"));
 
@@ -111,5 +112,9 @@ function runPart2() {
 }
 
 
-runPart1();
-runPart2();
+const measureRunPart1 = measureInMs(runPart1);
+
+
+const measureRunPart2 = measureInMs(runPart2);
+measureRunPart1();
+measureRunPart2();

@@ -12,7 +12,6 @@ export default class LinesLoader {
     getLines(): string[] {
         if (isArrayEmpty<string>(this.#linesArray)) {
             return this.#lines.split(/\r\n|\r|\n/).map((line) => line.trim());
-
         }
         return this.#linesArray;
     }

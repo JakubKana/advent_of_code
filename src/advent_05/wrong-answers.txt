@@ -1,0 +1,17 @@
+Advent_05 wrong answers part 2
+3995
+4024
+4094
+4113
+4132
+4152
+4153
+4185
+4241
+4372
+4416
+46xx
+
+its between 4000 and 4600
+
+To try part 2
