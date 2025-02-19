@@ -8,11 +8,18 @@ import HashMap from "../data-structures/HashMap.js";
 import {measureInMs} from "../utils/measure.js";
 import fs from "fs";
 
-const inputSize: "SM" | "LG" = "LG";
+const inputSize: "sm" | "lg" = "lg";
 
+function getPart1InputPath(): string {
+    return `input${inputSize === "sm" ? "_sm" : ""}_01.txt`;
+}
 
-const inputLoaderPart1 = new InputLoader().setPath(path.join(getDirname(), "input_sm_01.txt"));
-const inputLoaderPart2 = new InputLoader().setPath(path.join(getDirname(), "input_sm_02.txt"));
+function getPart2InputPath(): string {
+    return `input${inputSize === "sm" ? "_sm" : ""}_02.txt`;
+}
+
+const inputLoaderPart1 = new InputLoader().setPath(path.join(getDirname(), getPart1InputPath()));
+const inputLoaderPart2 = new InputLoader().setPath(path.join(getDirname(), getPart2InputPath()));
 
 const lines1 = new LinesLoader(inputLoaderPart1.loadInput());
 const lines2 = new LinesLoader(inputLoaderPart2.loadInput());
@@ -30,7 +37,6 @@ function parsePrintRules(input: string[], isNotAfterRules: boolean): HashMap {
     return rules;
 }
 
-
 function parsePrintLine(printLine: string): number[] {
     const printedNumbers: number[] = []
     printLine.split(',').map((number) => {
@@ -39,9 +45,40 @@ function parsePrintLine(printLine: string): number[] {
     return printedNumbers
 }
 
+function isPrintedNumberAfterAllRules(printedNumber: number, printedNumbers: number[], rulesForNumber: number[]): boolean {
+    let result = false;
+
+    if (rulesForNumber.length === 0) {
+        return true;
+    }
+
+    const indexOfPrintedNumber = printedNumbers.indexOf(printedNumber);
+    if (indexOfPrintedNumber === -1) {
+        return result;
+    }
+
+    for (const rule of rulesForNumber) {
+        if (printedNumbers.includes(rule)) {
+            const indexOfRule = printedNumbers.indexOf(rule);
+            if (indexOfPrintedNumber > indexOfRule) {
+                result = true;
+            } else {
+                result = false;
+                break;
+            }
+        }
+        result = true;
+    }
+    return result;
+
+}
 
 function isPrintedNumberBeforeAllRules(printedNumber: number, printedNumbers: number[], rulesForNumber: number[]): boolean {
     let result = false;
+
+    if (rulesForNumber.length === 0) {
+        return true;
+    }
 
     const indexOfPrintedNumber = printedNumbers.indexOf(printedNumber);
     if (indexOfPrintedNumber === -1) {
@@ -63,29 +100,31 @@ function isPrintedNumberBeforeAllRules(printedNumber: number, printedNumbers: nu
     return result;
 }
 
-
 function getMinPositionBasedOnAfterRulesIndex(printedLine: number[], rulesForNumber: number[]): number {
     let index = -1;
     for (const rule of rulesForNumber) {
         const indexOfRule = printedLine.indexOf(rule);
-
-        index = index === -1 ? indexOfRule : Math.max(index, indexOfRule);
-
+        if (indexOfRule !== -1) {
+            index = Math.min(index, indexOfRule);
+        }
     }
     return index;
 }
 
 function getMaxPositionBasedOnBeforeRulesIndex(printedLine: number[], rulesForNumber: number[]): number {
     let index = -1;
+
     for (const rule of rulesForNumber) {
         const indexOfRule = printedLine.indexOf(rule);
+        if (indexOfRule !== -1) {
 
-        index = index === -1 ? indexOfRule : Math.max(index, indexOfRule);
+            index = Math.max(index, indexOfRule);
 
+        }
     }
+
     return index;
 }
-
 
 function moveElementInArrayByIndex(arr: number[], fromIndex: number, toIndex: number) {
     const element = arr[fromIndex];
@@ -111,7 +150,8 @@ function runPart1() {
     printLines.forEach((line) => {
         // Parse the print line to array of numbers
         const printedNumbersLine = parsePrintLine(line);
-        const modifiedNumbersLine = [...printedNumbersLine];
+
+        const reconstructedLine: number[] = [];
         let correctlyPrinted = true;
 
         // Iterate over each printed number in the line
@@ -120,68 +160,58 @@ function runPart1() {
             const canNotPrintAfterNumbers = canNotPrintAfterRules.get(printedNumber);
             const canNotPrintBeforeNumbers = canNotPrintBeforeRules.get(printedNumber);
 
-            if (canNotPrintAfterNumbers) {
+            if (canNotPrintAfterNumbers || canNotPrintBeforeNumbers) {
                 // Is the printed number before all rules in the line means that the printed number is in the correct position
-                const isPrintedNumberBeforeAll = isPrintedNumberBeforeAllRules(printedNumber, modifiedNumbersLine, canNotPrintAfterNumbers || []);
-
-                if (!isPrintedNumberBeforeAll) {
+                const isPrintedNumberBeforeAll = isPrintedNumberBeforeAllRules(printedNumber, printedNumbersLine, canNotPrintAfterNumbers || []);
+                const isPrintedNumberAfterAll = isPrintedNumberAfterAllRules(printedNumber, printedNumbersLine, canNotPrintBeforeNumbers || []);
+                if (!isPrintedNumberBeforeAll || !isPrintedNumberAfterAll) {
                     correctlyPrinted = false;
-                    // Get the smallest rule index in the line
-                    const printedNumberIndex = modifiedNumbersLine.indexOf(printedNumber);
-
-                    let minRulePresentedInPrintedLineForBeforeRulesIndex = getMinPositionBasedOnAfterRulesIndex(modifiedNumbersLine, canNotPrintAfterNumbers);
-
-
-                    let maxRulePresentedInPrintedLineForAfterRulesIndex = getMaxPositionBasedOnBeforeRulesIndex(modifiedNumbersLine, canNotPrintBeforeNumbers || []);
-
-                    console.log("PrintedNumbersLine", modifiedNumbersLine);
-                    console.log("canNotPrintAfterNumber printedNumber: ", printedNumber, canNotPrintAfterNumbers);
-                    console.log("canNotPrintBeforeNumber printedNumber: ", printedNumber, canNotPrintBeforeNumbers);
-
-
-                    if (printedNumberIndex > minRulePresentedInPrintedLineForBeforeRulesIndex) {
-                        console.log("PrintedNumberIndex", printedNumberIndex);
-                        moveElementInArrayByIndex(modifiedNumbersLine, printedNumberIndex, minRulePresentedInPrintedLineForBeforeRulesIndex);
-                    }
-
-                  
-                    console.log("PrintedNumbersLine after move", modifiedNumbersLine);
+                    break;
                 }
             }
         }
 
-        const middleIndex = Math.floor(modifiedNumbersLine.length / 2);
-        const middleElement = modifiedNumbersLine[middleIndex];
-        if (correctlyPrinted) {
-            correctlyPrintedSum += middleElement;
-        } else if (!correctlyPrinted) {
-            incorrectlyPrintedSum += middleElement;
+        if (!correctlyPrinted) {
+            // Reconstruct the line
+            for (const printedNumber of printedNumbersLine) {
+                const canNotPrintAfterNumbers = canNotPrintAfterRules.get(printedNumber) || [];
+                const canNotPrintBeforeNumbers = canNotPrintBeforeRules.get(printedNumber) || [];
+                reconstructedLine.push(printedNumber);
 
+                let hasError = !isPrintedNumberBeforeAllRules(printedNumber, reconstructedLine, canNotPrintAfterNumbers || []) || !isPrintedNumberAfterAllRules(printedNumber, reconstructedLine, canNotPrintBeforeNumbers || []);
+                do {
+
+                    if (hasError) {
+                        let minIndex = getMinPositionBasedOnAfterRulesIndex(reconstructedLine, canNotPrintAfterNumbers)
+                        let maxIndex = getMaxPositionBasedOnBeforeRulesIndex(reconstructedLine, canNotPrintBeforeNumbers)
+                        let printedNumberIndex = reconstructedLine.indexOf(printedNumber);
+
+                        let newIndex = Math.max(Math.max(minIndex, 0), Math.max(maxIndex, 0));
+
+                        moveElementInArrayByIndex(reconstructedLine, printedNumberIndex, newIndex);
+                        hasError = !isPrintedNumberBeforeAllRules(printedNumber, reconstructedLine, canNotPrintAfterNumbers || []) || !isPrintedNumberAfterAllRules(printedNumber, reconstructedLine, canNotPrintBeforeNumbers || []);
+
+                    }
+                } while (hasError);
+            }
         }
-        // If the line is correctly printed add the line to the results
-        results.push(modifiedNumbersLine);
+
+        // Fix calculation after the line is correctly printed
+        if (correctlyPrinted) {
+            results.push(printedNumbersLine);
+            correctlyPrintedSum += printedNumbersLine[Math.floor(printedNumbersLine.length / 2)];
+        } else {
+            results.push(reconstructedLine);
+            incorrectlyPrintedSum += reconstructedLine[Math.floor(reconstructedLine.length / 2)];
+        }
     });
 
     console.log("Results", results);
     console.log("Correctly printed sum: ", correctlyPrintedSum); // Your puzzle answer was 5129.
     console.log("Incorrectly printed sum: ", incorrectlyPrintedSum);
-    // fs.writeFileSync("lg_results.txt", results.join('\n'));
 }
-
-// 75,97,47,61,53 becomes 97,75,47,61,53.
-// 61,13,29 becomes 61,29,13.
-// 97,13,75,29,47 becomes 97,75,47,29,13.
-
-
-function runPart2() {
-    const input = lines2.getLines();
-
-    console.log("InputLines", input);
-
-}
-
 
 const measureRunPart1 = measureInMs(runPart1);
-const measureRunPart2 = measureInMs(runPart2);
+
 
 measureRunPart1();

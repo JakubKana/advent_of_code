@@ -25,6 +25,16 @@ const isArrayEmpty: <T>(array: T[]) => boolean = <T>(array: T[]): boolean => {
     return array.length === 0;
 }
 
+function insertArrayBefore<T>(target: T[], insert: T[], index: number): T[] {
+    target.splice(index, 0, ...insert);
+    return target;
+}
 
-export {filename, dirname, getAppRootDir, getDirname, isArrayEmpty};
+function insertArrayAfter<T>(target: T[], insert: T[], index: number): T[] {
+    target.splice(index + 1, 0, ...insert);
+    return target;
+}
+
+
+export {filename, dirname, getAppRootDir, getDirname, isArrayEmpty, insertArrayAfter, insertArrayBefore};
 
